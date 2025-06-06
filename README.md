@@ -78,3 +78,19 @@ Uploading candidate symbols/videos requires additional code to handle file uploa
 Voting results are shown only to admins.
 
 Session middleware uses a secret key in config.py.
+
+
+Truncate Query 
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE votes;
+TRUNCATE TABLE candidates;
+TRUNCATE TABLE elections;
+
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS = 1;
+
+ALTER TABLE elections AUTO_INCREMENT = 1;
+ALTER TABLE candidates AUTO_INCREMENT = 1;
+ALTER TABLE votes AUTO_INCREMENT = 1;

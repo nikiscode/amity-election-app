@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Amity Student Election System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amityBlue: '#003366',
+                        amityRed: '#C8102E',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+
+    <!-- NAVIGATION -->
+    <nav class="bg-amityBlue text-white shadow">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between py-4">
+            <a href="/" class="flex items-center space-x-3">
+                <img src="/static/images/amity_logo.png" alt="Amity Bangalore Logo" class="h-10 w-auto bg-white p-2" />
+                <span class="text-xl sm:text-2xl font-extrabold hover:text-amityRed transition duration-300">
+                    Amity Election Portal
+                </span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden sm:flex space-x-6 text-lg items-center">
+                {% set path = request.url.path %}
+                {% if request.session.get('user_id') %}
+                <a href="/"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path == '/' %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">
+                    Home
+                </a>
+                <a href="/noticeBoard"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path.startswith('/noticeBoard') %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">
+                    Notice Board
+                </a>
+                {% if request.session.get("is_admin") %}
+                <a href="/admin/candidates"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path.startswith('/admin/candidates') %} bg-red-700 text-white {% else %} hover:bg-red-700 hover:text-white {% endif %}">
+                    Admin
+                </a>
+                <a href="/admin/elections"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path.startswith('/admin/elections') %} bg-red-700 text-white {% else %} hover:bg-red-700 hover:text-white {% endif %}">
+                    Elections
+                </a>
+                <a href="/admin/results"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path.startswith('/admin/results') %} bg-red-700 text-white {% else %} hover:bg-red-700 hover:text-white {% endif %}">
+                    Results
+                </a>
+                {% else %}
+                <a href="/nominate"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path.startswith('/nominate') %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">
+                    Nominate
+                </a>
+                <a href="/vote"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path.startswith('/vote') %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">
+                    Vote
+                </a>
+                {% endif %}
+
+                <!-- Profile Dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open"
+                        class="py-1 px-2 rounded-md text-white hover:bg-red-600 transition duration-300 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4z" />
+                            <path d="M4 20v-2a4 4 0 014-4h8a4 4 0 014 4v2" />
+                        </svg>
+                        Account
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="open" class="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded shadow-md z-10"
+                        style="z-index: 99;">
+                        <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                        <a href="/auth/logout" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
+
+                {% else %}
+                <a href="/auth/login"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path == '/auth/login' %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">
+                    Login
+                </a>
+                <a href="/auth/register"
+                    class="py-1 px-2 rounded-md transition duration-300 {% if path == '/auth/register' %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">
+                    Register
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="sm:hidden">
+                <button id="mobile-menu-button" aria-label="Toggle navigation menu"
+                    class="focus:outline-none focus:ring-2 focus:ring-amityRed">
+                    <svg id="menu-icon" class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                    <svg id="close-icon" class="w-8 h-8 text-white hidden" fill="none" stroke="currentColor"
+                        stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden bg-amityBlue px-4 pb-4 sm:hidden">
+            <div class="flex flex-col space-y-3 text-lg">
+                {% if request.session.get('user_id') %}
+                <a href="/"
+                    class="block py-1 px-2 rounded-md {% if path == '/' %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">Home</a>
+                <a href="/noticeBoard"
+                    class="block py-1 px-2 rounded-md {% if path.startswith('/noticeBoard') %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">Notice
+                    Board</a>
+                {% if request.session.get("is_admin") %}
+                <a href="/admin/candidates"
+                    class="block py-1 px-2 rounded-md {% if path.startswith('/admin/candidates') %} bg-red-700 text-white {% else %} hover:bg-red-700 hover:text-white {% endif %}">Admin</a>
+                <a href="/admin/elections"
+                    class="block py-1 px-2 rounded-md {% if path.startswith('/admin/elections') %} bg-red-700 text-white {% else %} hover:bg-red-700 hover:text-white {% endif %}">Elections</a>
+                <a href="/admin/results"
+                    class="block py-1 px-2 rounded-md {% if path.startswith('/admin/results') %} bg-red-700 text-white {% else %} hover:bg-red-700 hover:text-white {% endif %}">Results</a>
+                {% else %}
+                <a href="/nominate"
+                    class="block py-1 px-2 rounded-md {% if path.startswith('/nominate') %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">Nominate</a>
+                <a href="/vote"
+                    class="block py-1 px-2 rounded-md {% if path.startswith('/vote') %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">Vote</a>
+                {% endif %}
+                <!-- Dropdown for Account -->
+                <div class="block py-1 px-2 rounded-md bg-amityRed text-white">
+                    <details class="group">
+                        <summary class="cursor-pointer flex items-center justify-between">
+                            Account <span>&#9662;</span>
+                        </summary>
+                        <div class="ml-3 mt-2 space-y-1 text-white text-sm">
+                            <a href="/profile" class="block hover:underline">Profile</a>
+                            <a href="/auth/logout" class="block hover:underline">Logout</a>
+                        </div>
+                    </details>
+                </div>
+                {% else %}
+                <a href="/auth/login"
+                    class="block py-1 px-2 rounded-md {% if path == '/auth/login' %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">Login</a>
+                <a href="/auth/register"
+                    class="block py-1 px-2 rounded-md {% if path == '/auth/register' %} bg-amityRed text-white {% else %} hover:bg-amityRed hover:text-white {% endif %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-amityBlue text-white text-center py-4">
+        <p class="text-sm">&copy; 2025 Amity University Bangalore - Student Election System</p>
+    </footer>
+
+    <!-- Mobile menu toggle script -->
+    <script>
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+
+</html>

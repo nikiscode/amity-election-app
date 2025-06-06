@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Nominate Yourself - Amity Election{% endblock %}
+
+{% block content %}
+<h2 class="text-3xl font-extrabold mb-6 text-amityBlue text-center">Candidate Self-Nomination</h2>
+
+{% if message %}
+<div class="max-w-md mx-auto bg-green-100 text-green-800 p-4 rounded mb-6 text-center font-semibold">{{ message }}</div>
+{% endif %}
+
+<form method="post" action="/nominate" enctype="multipart/form-data"
+  class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg space-y-6">
+  <div>
+    <label for="name" class="block mb-1 font-medium text-gray-700">Candidate Name</label>
+    <input type="text" id="name" name="name" required value="{{ user_name }}" readonly
+      class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amityBlue" />
+  </div>
+
+  <div>
+    <label for="election_id" class="block mb-1 font-medium text-gray-700">Select Election</label>
+    <select id="election_id" name="election_id" required
+      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amityBlue">
+      <option value="" disabled selected>-- Choose Election --</option>
+      {% for election in elections %}
+      <option value="{{ election.id }}">
+        {{ election.title }} — {{ election.category.name }}
+        ({{ election.start_date.strftime('%Y-%m-%d') }} to {{ election.end_date.strftime('%Y-%m-%d') }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label for="slogan" class="block mb-1 font-medium text-gray-700">Slogan</label>
+    <input type="text" id="slogan" name="slogan" required
+      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amityBlue" />
+  </div>
+
+  <div>
+    <label for="symbol_image" class="block mb-1 font-medium text-gray-700">Upload Symbol Image</label>
+    <input type="file" id="symbol_image" name="symbol_image" accept="image/*" required class="w-full text-gray-700" />
+  </div>
+
+  <div>
+    <label for="video" class="block mb-1 font-medium text-gray-700">Upload Campaign Video</label>
+    <input type="file" id="video" name="video" accept="video/*" required class="w-full text-gray-700" />
+  </div>
+
+  <button type="submit"
+    class="w-full bg-amityBlue hover:bg-[#002244] text-white font-semibold py-3 rounded transition duration-300">
+    Submit Nomination
+  </button>
+</form>
+{% endblock %}

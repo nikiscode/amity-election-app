@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Vote - Amity Election{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <h2 class="text-3xl font-extrabold text-center text-amityBlue mb-10">Cast Your Vote</h2>
+
+  {% if voting_open %}
+    {% for election_data in elections_data %}
+    <div class="mb-12">
+      <h3 class="text-2xl font-bold text-amityRed mb-6 text-center">{{ election_data.election.title }}</h3>
+
+      {% if not election_data.voted %}
+      <form method="post" action="/vote">
+        <input type="hidden" name="election_id" value="{{ election_data.election.id }}" />
+
+        <div class="overflow-x-auto shadow border border-gray-200 rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 text-sm text-left bg-white">
+            <thead class="bg-gray-100 text-gray-600">
+              <tr>
+                <th class="px-6 py-3">Symbol</th>
+                <th class="px-6 py-3">Candidate</th>
+                <th class="px-6 py-3">Slogan</th>
+                <th class="px-6 py-3">Video</th>
+                <th class="px-6 py-3 text-right">Vote</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for candidate in election_data.candidates %}
+              <tr class="hover:bg-gray-50 transition">
+                <!-- Symbol -->
+                <td class="px-6 py-4">
+                  <img src="{{ candidate.symbol_image }}" alt="Symbol"
+                       class="h-10 w-10 object-contain rounded" />
+                </td>
+
+                <!-- Candidate Info -->
+                <td class="px-6 py-4 flex gap-3 items-center">
+                  {% if candidate.user.profile_image %}
+                  <img src="{{ url_for('static', path='uploads/profiles/' + candidate.user.profile_image) }}"
+                       class="h-12 w-12 rounded-full object-cover border border-gray-300" />
+                  {% endif %}
+                  <div class="leading-tight">
+                    <div class="font-semibold text-gray-800">{{ candidate.name }}</div>
+                    <div class="text-xs text-gray-500">{{ candidate.user.email }}</div>
+                  </div>
+                </td>
+
+                <!-- Slogan -->
+                <td class="px-6 py-4 italic text-gray-700">"{{ candidate.slogan }}"</td>
+
+                <!-- Video Preview -->
+                <td class="px-6 py-4">
+                  {% if candidate.video %}
+                  <button type="button" onclick="playVideo('{{ candidate.video }}')" class="text-blue-600 hover:underline text-sm">
+                    ▶️ Play
+                  </button>
+                  {% else %}
+                  <span class="text-gray-400 text-xs">No Video</span>
+                  {% endif %}
+                </td>
+
+                <!-- Vote -->
+                <td class="px-6 py-4 text-right">
+                  <input type="radio" name="candidate_id" value="{{ candidate.id }}"
+                         class="accent-amityRed scale-125" required />
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-center mt-6">
+          <button type="submit"
+                  class="px-8 py-3 bg-amityBlue hover:bg-[#002244] text-white font-semibold rounded-full shadow transition">
+            Submit Vote
+          </button>
+        </div>
+      </form>
+      {% else %}
+      <div class="bg-green-50 text-green-800 text-center font-semibold py-4 rounded">
+        ✅ You have already voted in <strong>{{ election_data.election.title }}</strong>.
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="bg-white p-6 rounded-lg shadow text-center text-gray-700 font-semibold">
+      🕓 Voting is currently closed. Please check back later.
+    </div>
+  {% endif %}
+</div>
+
+<!-- Video Modal -->
+<div id="videoModal" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-70 z-50">
+  <div class="bg-white rounded-lg overflow-hidden max-w-xl w-full relative">
+    <button onclick="closeVideo()"
+            class="absolute top-2 right-2 text-gray-700 hover:text-red-600 text-xl font-bold">&times;</button>
+    <video id="modalVideo" controls class="w-full h-auto"></video>
+  </div>
+</div>
+
+<script>
+  function playVideo(url) {
+    const modal = document.getElementById("videoModal");
+    const video = document.getElementById("modalVideo");
+    video.src = url;
+    modal.classList.remove("hidden");
+  }
+
+  function closeVideo() {
+    const modal = document.getElementById("videoModal");
+    const video = document.getElementById("modalVideo");
+    video.pause();
+    video.currentTime = 0;
+    modal.classList.add("hidden");
+  }
+</script>
+{% endblock %}

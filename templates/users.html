@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6 text-red-700">Registered Users</h2>
+<table class="min-w-full bg-white shadow rounded">
+    <thead>
+        <tr class="bg-red-600 text-white">
+            <th class="p-3 text-left">Name</th>
+            <th class="p-3 text-left">Email</th>
+            <th class="p-3 text-left">Admin</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr class="border-b hover:bg-gray-100">
+            <td class="p-3">{{ user.name }}</td>
+            <td class="p-3">{{ user.email }}</td>
+            <td class="p-3">{{ "Yes" if user.is_admin else "No" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Home - Amity Election{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Background Video -->
+<section class="relative w-full h-[90vh] overflow-hidden">
+  <video autoplay loop muted class="absolute w-full h-full object-cover">
+    <source src="/static/videos/election_intro.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="relative z-10 bg-black bg-opacity-60 w-full h-full flex flex-col justify-center items-center text-white px-6 text-center">
+    <h1 class="text-5xl font-extrabold mb-4" data-aos="fade-up">Welcome to the Amity Student Election Portal</h1>
+    <p class="text-xl mb-6 max-w-2xl" data-aos="fade-up" data-aos-delay="200">
+      Transparent. Engaging. Empowered. Your voice matters—nominate, campaign, and vote securely.
+    </p>
+  </div>
+</section>
+
+<!-- About Elections -->
+<section class="py-16 bg-white text-center" data-aos="fade-up">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-3xl font-bold text-amityBlue mb-6">Why Participate in Student Elections?</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-10">
+      <div class="p-4">
+        <img src="/static/images/Leadership.jpg" class="h-20 mx-auto mb-4" />
+        <h3 class="text-xl font-semibold mb-2">Leadership</h3>
+        <p>Shape your campus by voting or becoming a leader who represents your peers.</p>
+      </div>
+      <div class="p-4">
+        <img src="/static/images/Engagement.jpg" class="h-20 mx-auto mb-4" />
+        <h3 class="text-xl font-semibold mb-2">Engagement</h3>
+        <p>Participate in a democratic process that builds responsibility and teamwork.</p>
+      </div>
+      <div class="p-4">
+        <img src="/static/images/Transparency.png" class="h-20 mx-auto mb-4" />
+        <h3 class="text-xl font-semibold mb-2">Transparency</h3>
+        <p>Secure, fair, and transparent elections handled by advanced digital systems.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Promotional Video -->
+<section class="bg-gray-100 py-16" data-aos="fade-up">
+  <div class="max-w-4xl mx-auto text-center px-4">
+    <h2 class="text-3xl font-bold text-amityBlue mb-6">Watch: How Elections Work at Amity</h2>
+    <video controls class="rounded-lg shadow-md w-full max-w-3xl mx-auto">
+      <source src="/static/videos/how_it_works.mov" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-20 bg-amityBlue text-white text-center" data-aos="fade-up">
+  <div class="max-w-3xl mx-auto px-6">
+    <h2 class="text-3xl font-bold mb-4">Ready to Make an Impact?</h2>
+    <p class="mb-6">Start by nominating yourself. Your leadership journey begins here.</p>
+    <a href="/nominate" class="bg-white text-amityBlue font-bold px-6 py-3 rounded shadow-lg hover:bg-gray-100 transition">Nominate Now</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Animate on Scroll (AOS) for entry animations -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 1000,
+    once: true
+  });
+</script>
+{% endblock %}

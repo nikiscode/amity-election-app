@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Election Results - Amity Election{% endblock %}
+
+{% block content %}
+<h2 class="text-3xl font-extrabold mb-6 text-amityBlue text-center">Election Results</h2>
+
+<!-- Election selector form -->
+<form method="get" action="/admin/results" class="max-w-md mx-auto mb-8">
+  <label for="election_id" class="block font-semibold mb-2">Select Election:</label>
+  <select name="election_id" id="election_id" required
+          class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amityBlue">
+    <option value="" disabled {% if not selected_election_id %}selected{% endif %}>Select the election</option>
+    {% for election in all_elections %}
+      <option value="{{ election.id }}"
+        {% if election.id == selected_election_id %}selected{% endif %}>
+        {{ election.category.name }} | Starts: {{ election.start_time.strftime("%Y-%m-%d %H:%M") }} | Ends: {{ election.end_time.strftime("%Y-%m-%d %H:%M") }}
+      </option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="mt-4 bg-amityBlue hover:bg-[#002244] text-white font-semibold px-4 py-2 rounded">
+    View Results
+  </button>
+</form>
+
+{% if selected_election %}
+  <h3 class="text-xl font-semibold text-center mb-6 text-amityBlue">
+    Results for Election: {{ selected_election.category.name }} (ID: {{ selected_election.id }})
+  </h3>
+
+  {% if winner %}
+    <div class="max-w-4xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
+      <div class="bg-green-100 rounded-lg shadow p-6 text-center">
+        <h3 class="text-xl font-bold mb-2 text-green-800">Winner</h3>
+        <p class="text-lg font-semibold">{{ winner.name }}</p>
+        <p class="italic text-gray-700 mb-3">{{ winner.slogan }}</p>
+        <p class="text-4xl font-extrabold text-green-900">{{ votes_count[winner.id] }}</p>
+        <p class="text-sm text-green-700">Votes</p>
+      </div>
+      {% if runner_up %}
+      <div class="bg-yellow-100 rounded-lg shadow p-6 text-center">
+        <h3 class="text-xl font-bold mb-2 text-yellow-800">Runner-up</h3>
+        <p class="text-lg font-semibold">{{ runner_up.name }}</p>
+        <p class="italic text-gray-700 mb-3">{{ runner_up.slogan }}</p>
+        <p class="text-4xl font-extrabold text-yellow-900">{{ votes_count[runner_up.id] }}</p>
+        <p class="text-sm text-yellow-700">Votes</p>
+      </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if candidates %}
+  <table class="w-full table-auto border-collapse border border-gray-300 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+    <thead class="bg-amityBlue text-white">
+      <tr>
+        <th class="border border-gray-300 px-4 py-2">Rank</th>
+        <th class="border border-gray-300 px-4 py-2">Candidate</th>
+        <th class="border border-gray-300 px-4 py-2">Slogan</th>
+        <th class="border border-gray-300 px-4 py-2">Votes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for candidate in candidates %}
+      <tr class="{% if loop.index == 1 %}bg-green-100 font-bold{% elif loop.index == 2 %}bg-yellow-100 font-semibold{% else %}hover:bg-gray-100{% endif %}">
+        <td class="border border-gray-300 px-4 py-2 text-center">{{ loop.index }}</td>
+        <td class="border border-gray-300 px-4 py-2">{{ candidate.name }}</td>
+        <td class="border border-gray-300 px-4 py-2">{{ candidate.slogan }}</td>
+        <td class="border border-gray-300 px-4 py-2 text-center">{{ votes_count[candidate.id] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-center text-gray-700 font-semibold mt-8">No results to display yet.</p>
+  {% endif %}
+{% else %}
+  <p class="text-center text-gray-700 font-semibold mt-8">Please select an election to view results.</p>
+{% endif %}
+
+{% endblock %}
